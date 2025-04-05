@@ -8,9 +8,9 @@ const app = express();
 // MySQL connection
 const pool = mysql.createPool({
   host: 'localhost',
-  user: 'your_username',
-  password: 'your_password',
-  database: 'your_database',
+  user: 'root',
+  password: '',
+  database: 'adsmor',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -56,12 +56,6 @@ app.post('/api/ads', upload.single('image'), async (req, res) => {
   }
 });
 
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-// db.connect(err => {
-//     if (err) {
-//         console.error('Error connecting to MySQL:', err);
-//         return;
-//     }
-//     console.log('Connected to MySQL database.');
-// });
