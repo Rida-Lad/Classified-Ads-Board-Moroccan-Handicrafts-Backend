@@ -77,5 +77,91 @@ app.post('/api/ads', upload.single('image'), async (req, res) => {
 });
 
 
+// Get ad by access code
+app.get('/api/ads/:accessCode', async (req, res) => {
+  try {
+    const [rows] = await pool.promise().query(
+      'SELECT * FROM ads WHERE access_code = ?',
+      [req.params.accessCode]
+    );
+    
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Ad not found' });
+    }
+    
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update ad
+app.put('/api/ads/:accessCode', upload.single('image'), async (req, res) => {
+  try {
+    const { title, description, price, category, phone_number } = req.body;
+    const accessCode = req.params.accessCode;
+
+    let imagePath = req.body.existingImage; // Keep existing image if not changed
+    
+    if (req.file) {
+      imagePath = req.file.filename;
+      // Delete old image file (optional)
+      // fs.unlinkSync(path.join(uploadDir, req.body.existingImage));
+    }
+
+    const [result] = await pool.promise().execute(
+      `UPDATE ads SET 
+       title = ?, 
+       description = ?, 
+       price = ?, 
+       category = ?, 
+       phone_number = ?,
+       image_path = ?
+       WHERE access_code = ?`,
+      [title, description, price, category, phone_number, imagePath, accessCode]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Ad not found' });
+    }
+
+    res.json({ message: 'Ad updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete ad
+app.delete('/api/ads/:accessCode', async (req, res) => {
+  try {
+    // First get the ad to delete the image file
+    const [rows] = await pool.promise().query(
+      'SELECT image_path FROM ads WHERE access_code = ?',
+      [req.params.accessCode]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Ad not found' });
+    }
+
+    // Delete from database
+    await pool.promise().execute(
+      'DELETE FROM ads WHERE access_code = ?',
+      [req.params.accessCode]
+    );
+
+    // Delete image file (optional)
+    // fs.unlinkSync(path.join(uploadDir, rows[0].image_path));
+
+    res.json({ message: 'Ad deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
