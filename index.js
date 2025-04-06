@@ -46,6 +46,17 @@ function generateAccessCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+// Add this before the POST endpoint in server.js
+app.get('/api/ads', async (req, res) => {
+  try {
+    const [rows] = await pool.promise().query('SELECT * FROM ads ORDER BY created_at DESC');
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // POST endpoint
 app.post('/api/ads', upload.single('image'), async (req, res) => {
   try {
@@ -59,19 +70,6 @@ app.post('/api/ads', upload.single('image'), async (req, res) => {
     );
 
     res.status(201).json({ accessCode });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-
-
-// Add this before the POST endpoint in server.js
-app.get('/api/ads', async (req, res) => {
-  try {
-    const [rows] = await pool.promise().query('SELECT * FROM ads ORDER BY created_at DESC');
-    res.json(rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
