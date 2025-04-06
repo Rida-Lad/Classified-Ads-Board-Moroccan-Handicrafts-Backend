@@ -107,7 +107,7 @@ app.put('/api/ads/:accessCode', upload.single('image'), async (req, res) => {
     if (req.file) {
       imagePath = req.file.filename;
       // Delete old image file (optional)
-      // fs.unlinkSync(path.join(uploadDir, req.body.existingImage));
+      fs.unlinkSync(path.join(uploadDir, req.body.existingImage));
     }
 
     const [result] = await pool.promise().execute(
@@ -153,7 +153,7 @@ app.delete('/api/ads/:accessCode', async (req, res) => {
     );
 
     // Delete image file (optional)
-    // fs.unlinkSync(path.join(uploadDir, rows[0].image_path));
+    fs.unlinkSync(path.join(uploadDir, rows[0].image_path));
 
     res.json({ message: 'Ad deleted successfully' });
   } catch (err) {
