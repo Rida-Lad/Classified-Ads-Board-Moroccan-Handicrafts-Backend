@@ -96,6 +96,34 @@ app.get('/api/ads/:accessCode', async (req, res) => {
   }
 });
 
+
+app.get('/api/admin/stats', async (req, res) => {
+  try {
+    // Total ads
+    const [totalResult] = await pool.promise().query('SELECT COUNT(*) as total FROM ads');
+    
+    // Ads per category
+    const [categoryResult] = await pool.promise().query(
+      'SELECT category, COUNT(*) as count FROM ads GROUP BY category'
+    );
+    
+    // Latest ads
+    const [latestResult] = await pool.promise().query(
+      'SELECT title, created_at FROM ads ORDER BY created_at DESC LIMIT 5'
+    );
+
+    res.json({
+      total: totalResult[0].total,
+      byCategory: categoryResult,
+      latest: latestResult
+    });
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Update ad
 app.put('/api/ads/:accessCode', upload.single('image'), async (req, res) => {
   try {
