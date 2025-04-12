@@ -84,11 +84,11 @@ app.get('/api/ads/:accessCode', async (req, res) => {
       'SELECT * FROM ads WHERE access_code = ?',
       [req.params.accessCode]
     );
-    
+
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Ad not found' });
     }
-    
+
     res.json(rows[0]);
   } catch (err) {
     console.error(err);
@@ -101,23 +101,32 @@ app.get('/api/admin/stats', async (req, res) => {
   try {
     // Total ads
     const [totalResult] = await pool.promise().query('SELECT COUNT(*) as total FROM ads');
-    
+
     // Ads per category
     const [categoryResult] = await pool.promise().query(
       'SELECT category, COUNT(*) as count FROM ads GROUP BY category'
     );
-    
+
     // Latest ads
     const [latestResult] = await pool.promise().query(
       'SELECT title, created_at FROM ads ORDER BY created_at DESC LIMIT 5'
+    );
+    // New: Top contributors by phone number
+    const [contributorsResult] = await pool.promise().query(
+      `SELECT phone_number, COUNT(*) as ad_count 
+           FROM ads 
+           GROUP BY phone_number 
+           ORDER BY ad_count DESC 
+           LIMIT 3`
     );
 
     res.json({
       total: totalResult[0].total,
       byCategory: categoryResult,
-      latest: latestResult
+      latest: latestResult,
+      topContributors: contributorsResult
     });
-    
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -131,7 +140,7 @@ app.put('/api/ads/:accessCode', upload.single('image'), async (req, res) => {
     const accessCode = req.params.accessCode;
 
     let imagePath = req.body.existingImage; // Keep existing image if not changed
-    
+
     if (req.file) {
       imagePath = req.file.filename;
       // Delete old image file (optional)
