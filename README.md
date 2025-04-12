@@ -1,32 +1,57 @@
+# Moroccan Handicrafts Classified Board - Backend
 
----
+A powerful Express.js backend that drives a classified ads platform specifically designed for Moroccan handicrafts, with MySQL database integration and robust image management.
 
-## 🚀 **Backend - `classified-ads-board-for-moroccan-handicrafts-Backend`**
+## ✨ Features
 
-# Classified Ads Board for Moroccan Handicrafts - Backend
+- **📋 Complete CRUD Operations** - RESTful API endpoints to create, read, update and delete advertisements
+- **🔐 Secure Access System** - Each ad receives a unique 6-digit access code for management
+- **📸 Image Management** - Secure image uploads with randomized filenames for privacy
+- **📊 Statistics & Analytics** - Admin endpoints providing platform usage metrics
+- **🧠 Smart Organization** - Category-based filtering and organization
 
-This Express.js backend powers a classified ads platform for Moroccan handicrafts, storing ads and managing image uploads, using MySQL as the database.
+## 🛠️ Tech Stack
 
-## ⚙️ Features
+- **🟢 Runtime**: Node.js
+- **⚡ Framework**: Express.js
+- **🐬 Database**: MySQL
+- **📁 File Handling**: Multer
 
-- 🗃️ RESTful API to create, read, update, delete ads
-- 💾 MySQL database for storing ad data
-- 📸 Image uploads using Multer
-- 🔐 Each ad is assigned a unique 6-digit access code (different from ID)
-- 🧹 Uploaded images are saved with randomly generated names to ensure privacy
-- 📈 Supports admin stats endpoints for frontend charts
+## 📋 API Endpoints
 
-## 🧰 Tech Stack
+### Public Routes
 
-- **Backend**: Node.js, Express.js
-- **Database**: MySQL
-- **Image Uploads**: Multer
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/ads` | Create a new advertisement |
+| `GET` | `/ads` | Retrieve all advertisements |
+| `GET` | `/ads/:id` | Get a specific advertisement |
+| `PUT` | `/ads/:accessCode` | Update an advertisement |
+| `DELETE` | `/ads/:accessCode` | Remove an advertisement |
+| `GET` | `/categories` | List all available categories |
+| `GET` | `/stats` | Retrieve admin statistics |
 
-## 🔧 Installation & Setup
+## 💾 Database Schema
+
+**Table: ads**
+
+| Column | Type | Description |
+|--------|------|-------------|
+| 🔑 id | INT | Auto-increment primary key |
+| 📝 title | VARCHAR | Title of the advertisement |
+| 📄 description | TEXT | Detailed description |
+| 🏷️ category | VARCHAR | Handicraft category |
+| 💰 price | DECIMAL | Listed price |
+| 📱 phone | VARCHAR | Contact information |
+| 🖼️ image | VARCHAR | Stored image filename |
+| 🔐 access_code | VARCHAR(6) | Unique 6-digit management code |
+| 🕒 created_at | TIMESTAMP | Creation timestamp |
+
+## ⚙️ Installation & Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/classified-ads-board-for-moroccan-handicrafts-Backend.git
+git clone https://github.com/Rida-Lad/clasified-ads-board-for-moroccan-handicrafts-Backend.git
 cd classified-ads-board-for-moroccan-handicrafts-Backend
 
 # Install dependencies
@@ -34,46 +59,22 @@ npm install
 
 # Configure your .env file
 touch .env
-
 ```
 
-Example .env file:
+### 🔧 Environment Configuration
+
+Create a `.env` file with the following variables:
+
+```
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=yourpassword
 DB_NAME=handicrafts_ads
 PORT=5000
+```
 
-Make sure your MySQL database is up and running.
+> ⚠️ Ensure your MySQL database is running before starting the application.
 
-📌 API Endpoints
-Public Routes
-POST /ads - Create new ad
+## 👥 Contributing
 
-GET /ads - Get all ads
-
-GET /ads/:id - Get single ad
-
-PUT /ads/:accessCode - Update ad
-
-DELETE /ads/:accessCode - Delete ad
-
-GET /categories - List categories
-
-GET /stats - Get admin statistics (used in frontend)
-
-🗃 Example Database Schema
-Table: ads
-
-Column	Type	Description
-id	INT	Auto-increment primary key
-title	VARCHAR	Title of the ad
-description	TEXT	Description
-category	VARCHAR	Category of the handicraft
-price	DECIMAL	Price
-phone	VARCHAR	Contact phone
-image	VARCHAR	Stored filename
-access_code	VARCHAR(6)	Unique 6-digit code
-created_at	TIMESTAMP	Creation time
-🤝 Contributing
 Open an issue or submit a PR to improve or suggest features.
